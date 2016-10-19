@@ -1,0 +1,2 @@
+# createRandomTrack
+(The play_track does not work cause I'm still having trouble with fluidsynth) Function that generates a (kind of) random (rhythm) track  given a key and a boolean happy (that decides weather more major chords or minor chords will be played). The progressions I used here are the most common ones but I can make it so we can select a mode (feel) for the song out of 5-6 choices and the progression would depend on that. Also I have no idea what this sounds like because fluidsynth doesn't work. 
