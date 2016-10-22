@@ -4,16 +4,17 @@ import os
 import numpy
 from mingus.containers import *
 import mingus.core.keys
-import mingus.midi.fluidsynth
+import mingus.extra.lilypond as lilypond
 import mingus.core.progressions as progressions
 
 from mingus.core import notes
-
 def make_progression(base_chord, major):
+    temp = notes.note_to_int(base_chord)
+    base_chord = notes.int_to_note(temp, 'b')
     if (major):
-        return progressions.to_chords(['I', 'V', 'VI', 'IV'], base_chord)
+        return progressions.to_chords(['I', 'V', 'VIm', 'IV'], base_chord)
     else:
-        return progressions.to_chords(['Im', 'Vm', 'bVI', 'IVm'], base_chord)
+        return progressions.to_chords(['Im', 'Vm', 'VI', 'IVm'], base_chord)
 #function returns a (basic) chord progression for a given base chord
 def alternative_progression(key,major):
     if major: #major
@@ -29,6 +30,8 @@ def alternative_progression(key,major):
 #returns a list of alternate base chords in that key that go well with main progression
 
 def create_random_track(key, happy):
+    temp = notes.note_to_int(key)
+    key = notes.int_to_note(temp, 'b')
     newTrack= Track()
     progressionChoice = alternative_progression(key, happy)
     for i in range (0,4):
@@ -53,6 +56,4 @@ def create_random_track(key, happy):
                 prevInd=chordIndex
             newTrack+curBar
     return newTrack
-
-print create_random_track('C',True)
-mingus.midi.fluidsynth.play_Track(create_random_track('C',True),1,120) #example track, plays on channel 1 at 120 bpm
+print create_random_track('G#',False)
