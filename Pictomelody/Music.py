@@ -29,15 +29,14 @@ def alternative_progression(key,major):
         return [[key,False],[first, True], [second, False], [third, False]]
 #returns a list of alternate base chords in that key that go well with main progression
 
-def create_random_track(key, happy):
+def create_random_track(key, happy,bars):
     temp = notes.note_to_int(key)
     key = notes.int_to_note(temp, 'b')
     newTrack= Track()
     progressionChoice = alternative_progression(key, happy)
-    for i in range (0,4):
+    for i in range (0,bars):
         curBar = Bar(key, (4, 4))
         useProgression = progressionChoice[random.choice(range(0, len(progressionChoice)))]
-        progressionChoice.remove(useProgression)
         Progression = make_progression(useProgression[0], useProgression[1])
         for j in range(0,4):
             prevChord=False
@@ -56,4 +55,5 @@ def create_random_track(key, happy):
                 prevInd=chordIndex
             newTrack+curBar
     return newTrack
-print create_random_track('G#',False)
+print create_random_track('A#',False,24)
+
