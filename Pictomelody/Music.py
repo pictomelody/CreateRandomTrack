@@ -5,6 +5,7 @@ import numpy
 from mingus.containers import *
 import mingus.core.keys
 import mingus.extra.lilypond as lilypond
+from mingus.midi import midi_file_out
 import mingus.core.progressions as progressions
 
 from mingus.core import notes
@@ -31,29 +32,42 @@ def alternative_progression(key,major):
 
 def create_random_track(key, happy,bars):
     temp = notes.note_to_int(key)
-    key = notes.int_to_note(temp, 'b')
+    key = notes.int_to_note(temp, 'b') #convert all accidentals to flats
     newTrack= Track()
-    progressionChoice = alternative_progression(key, happy)
+    progressionChoice = alternative_progression(key, happy) #get an array of the possible progressions
+    prevProg=False
     for i in range (0,bars):
         curBar = Bar(key, (4, 4))
-        useProgression = progressionChoice[random.choice(range(0, len(progressionChoice)))]
-        Progression = make_progression(useProgression[0], useProgression[1])
-        for j in range(0,4):
-            prevChord=False
-            while curBar.current_beat<1:
-                if (prevChord):
-                    chordIndex= prevInd+ random.choice([1,-1])
-                    #the current chord is nect to the previous one in the progression
-                    if chordIndex==-1:
-                        chordIndex=3
-                    elif chordIndex==4:
-                        chordIndex=0
-                else:
-                    chordIndex=random.choice(range(0,4))
-                prevChord=True
-                curBar.place_notes(Progression[chordIndex], 4)
-                prevInd=chordIndex
-            newTrack+curBar
+        if (prevProg): #if it's not the first bar
+            progIndex = prevProgInd + random.choice([1, -1])
+            # make sure the current progression is next to the previous one
+            if progIndex == -1:
+                progIndex = 3
+            elif progIndex == 4:
+                progIndex = 0
+        else:
+            progIndex = random.choice(range(0, 4)) #the first progression is randmly chosen
+        prevProg = True
+        prevProgInd = progIndex
+        useProgression = progressionChoice[progIndex]
+        Progression = make_progression(useProgression[0], useProgression[1]) #get the progression
+        prevChord = False
+        while curBar.current_beat < 1:
+            if (prevChord): #if it's not the first chord
+                chordIndex = prevInd + random.choice([1, -1])
+                # to make sure the current chord is next to the previous one in the progression
+                if chordIndex == -1:
+                    chordIndex = 3
+                elif chordIndex == 4:
+                    chordIndex = 0
+            else:
+                chordIndex = random.choice(range(0, 4)) #the first chord is a random chord from the progression
+            prevChord = True
+            curBar.place_notes(Progression[chordIndex], 4)
+            prevInd = chordIndex
+        newTrack + curBar #add bar to the track
     return newTrack
-print create_random_track('A#',False,24)
-
+someTrack = create_random_track('C', True, 24)
+print someTrack
+print mingus.extra.lilypond.from_Track(someTrack)
+mingus.midi.midi_file_out.write_Track("track.midi", someTrack) #create a midi file
