@@ -67,7 +67,7 @@ def create_random_track(key, happy,bars):
             prevInd = chordIndex
         newTrack + curBar #add bar to the track
     return newTrack
-someTrack = create_random_track('C', True, 24)
+someTrack = create_random_track('D', False, 24)
 print someTrack
 print mingus.extra.lilypond.from_Track(someTrack)
 mingus.midi.midi_file_out.write_Track("track.midi", someTrack) #create a midi file
